@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+import "./tokens/LPToken.sol";
+
 // change LP Token
 contract Stake is Ownable {
     using Address for address;
@@ -13,12 +15,12 @@ contract Stake is Ownable {
     IERC20 depositToken;
     IERC20 collateralToken;
     IERC20 rewardsToken;
-    IERC20 lpToken;
+    LPToken lpToken;
 
     uint256 rewards;
     uint256 totalDeposits;
     uint256 totalCollateral;
-    uint256 public constant tenure = 30 days;
+    uint256 public constant tenure = 30 seconds; // for dev
     uint256 public constant rate = 5;
 
     struct Account {
@@ -45,7 +47,7 @@ contract Stake is Ownable {
         depositToken = IERC20(_deposit);
         collateralToken = IERC20(_collateral);
         rewardsToken = IERC20(_rewards);
-        lpToken = IERC20(_lp);
+        lpToken = LPToken(_lp);
     }
 
     function deposit(uint256 amount) external returns (bool) {
@@ -63,7 +65,7 @@ contract Stake is Ownable {
         accounts[user] = Account({amount: amount, depositTime: time});
         totalDeposits += amount;
         totalCollateral += col;
-        // lp.mint(user, amount);
+        lpToken.mint(user, amount);
         emit Deposit(user, amount, time);
         return true;
     }
@@ -89,7 +91,7 @@ contract Stake is Ownable {
         require(acc.amount != 0, "Invalid account");
         require(acc.amount >= amount, "Invalid amount");
         uint256 interest = calculateInterest(acc.amount, acc.depositTime);
-        // lp.burn(user, amount);
+        lpToken.burn(user, amount);
 
         bool sent = depositToken.transfer(user, amount);
         require(sent, "Token Transfer failed");
