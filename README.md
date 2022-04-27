@@ -1,15 +1,25 @@
-# Basic Sample Hardhat Project
+# Collateral Staking
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+A hardhat project for staking contract which allows staking of <strong> USDT Token</strong> with <strong>Token X</strong> token as collateral.
 
-Try running some of the following tasks:
+While making a stake, you are required to make a deposit of 10% <strong>Token X</strong> tokens as collateral. If you withdraw before the specified, you will lose the collateral, else once after the tenure completes, the user can withdraw the their stake along with collateral and their interest yielded.
+
+If the user decides to continue the stake, the interest earned will be compuneded in terms of once per tenure.
+
+To deploy contracts
 
 ```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
+    npx hardhat run .\scripts\deploy.js
+```
+
+To compile
+
+```shell
+    npx hardhat compile
+```
+
+To test
+
+```shell
+    npx hardhat test
 ```
