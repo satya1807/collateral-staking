@@ -17,9 +17,8 @@ contract Stake is Ownable {
     IERC20 rewardsToken;
     LPToken lpToken;
 
-    uint256 rewards;
-    uint256 totalDeposits;
-    uint256 totalCollateral;
+    uint256 public totalDeposits;
+    uint256 public totalCollateral;
     uint256 public constant tenure = 30 seconds; // for dev
     uint256 public constant rate = 5;
 
@@ -76,10 +75,9 @@ contract Stake is Ownable {
         returns (uint256)
     {
         uint256 currentTime = block.timestamp;
-        uint256 inteverals = (currentTime - depositTime) % tenure;
-        if (inteverals == 0) return 0;
-
-        uint256 total = amount * (1 + rate)**inteverals;
+        uint256 intervals = (currentTime - depositTime) / tenure;
+        if (intervals == 0) return 0;
+        uint256 total = (amount * (100 + rate)**intervals) / (100)**intervals;
         uint256 interest = total - amount;
         return interest;
     }
@@ -108,7 +106,6 @@ contract Stake is Ownable {
         }
 
         totalDeposits -= amount;
-        rewards -= interest;
         totalCollateral -= col;
 
         emit Withdraw(user, amount, interest);
